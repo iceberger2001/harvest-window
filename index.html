@@ -29,11 +29,19 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
 .screen{display:none;flex-direction:column;flex:1;}.screen.active{display:flex;animation:fadeIn .28s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes floatC{0%{opacity:0;transform:translateY(20px) scale(.8)}20%{opacity:.35}80%{opacity:.15}100%{opacity:0;transform:translateY(-50px) scale(1.1)}}
-@keyframes sweetPulse{0%,100%{opacity:.1}50%{opacity:.22}}
+@keyframes sweetPulse{0%,100%{opacity:.16}50%{opacity:.28}}
+@keyframes sweetBright{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4)}}
+.sweet.in-zone{animation:sweetBright 1.2s ease-in-out infinite}
 @keyframes popIn{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes cellPop{0%{transform:scale(1)}25%{transform:scale(.72)}65%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes floatPts{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-54px) scale(.85)}}
+.cell.popping{animation:cellPop .38s cubic-bezier(.34,1.56,.64,1)}
+.float-pts{position:fixed;font-size:13px;font-weight:600;pointer-events:none;z-index:500;animation:floatPts .9s ease-out forwards;font-family:var(--dm)}
 @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes dangerPulse{0%,100%{border-color:rgba(232,92,92,.4)}50%{border-color:rgba(232,92,92,.9)}}
 .eco-track.critical-state{animation:dangerPulse .6s ease-in-out infinite}
+.eco-track.danger-over{box-shadow:0 0 0 2px rgba(232,92,92,.55),0 0 12px 2px rgba(232,92,92,.25)}
+.eco-track.danger-under{box-shadow:0 0 0 2px rgba(109,158,232,.55),0 0 12px 2px rgba(109,158,232,.25)}
 #screen-title{align-items:center;justify-content:flex-start;text-align:center}
 .tbg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .tc{position:absolute;border-radius:8px;opacity:0;animation:floatC 8s infinite}
@@ -80,11 +88,13 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
 .t-bar-wrap{margin-bottom:10px}.t-track{height:5px;background:var(--bg3);border-radius:0;overflow:hidden}
 .t-fill{height:100%;border-radius:0;transition:width .95s linear,background .5s}
 .eco-sec{margin-bottom:10px}.eco-lr{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px}
+.coach-hint{font-size:12px;color:var(--text2);text-align:center;padding:4px 0 4px;margin-bottom:6px;display:none;animation:slideUp .3s ease}.coach-hint.on{display:block}
 .eco-st{font-weight:500;transition:color .3s}
 .eco-track{height:34px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;position:relative;overflow:hidden;transition:border-color .3s}
 .eco-fill{height:100%;border-radius:0;transition:width 1.2s cubic-bezier(.25,.46,.45,.94),background .4s ease}
 .sweet{position:absolute;top:0;height:100%;pointer-events:none}.sweet.pulse{animation:sweetPulse 1.5s ease-in-out infinite}
-.sweet-edge{position:absolute;top:0;width:2px;height:100%;background:rgba(109,189,120,.6);pointer-events:none}
+.sweet-edge{position:absolute;top:0;width:3px;height:100%;background:rgba(109,189,120,.85);box-shadow:0 0 6px 1px rgba(109,189,120,.45);pointer-events:none}
+.sweet-label{position:absolute;top:50%;transform:translateY(-50%);left:0;width:100%;text-align:center;font-size:9px;letter-spacing:.1em;color:rgba(109,189,120,.55);pointer-events:none;user-select:none}
 .eco-pct{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:500;color:var(--text);pointer-events:none}
 .ph-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;min-height:20px;padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px}
 .ph-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .4s}
@@ -209,7 +219,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
     <div class="ts-item"><div class="ts-v" id="tb-pres">1/6</div><div class="ts-l">biomes</div></div>
   </div>
   <button class="play-btn" onclick="snd.click();showTutorial()" style="margin-bottom:8px">open window</button>
-  <button class="daily-btn" id="daily-btn" onclick="snd.click();handleDailyBtn()" style="margin-bottom:8px"><span id="daily-btn-text">daily window </span><span class="premium-chip" id="daily-premium-chip">pro</span></button>
+  <button class="daily-btn" id="daily-btn" onclick="snd.click();handleDailyBtn()" style="margin-bottom:8px"><span id="daily-btn-text">today's run </span><span class="premium-chip" id="daily-premium-chip">pro</span></button>
   <button class="settings-btn" onclick="snd.click();showSettings()" style="margin-bottom:12px;width:100%;max-width:280px;padding:8px">settings</button>
   <div class="nav-tabs" style="margin-bottom:10px">
     <button class="nav-tab active" onclick="showTab('biomes')">biomes</button>
@@ -219,7 +229,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
   <div style="width:100%;max-width:280px;flex:1;overflow-y:auto;padding-bottom:8px">
     <div class="lb-panel on" id="lb-biomes"><div id="biome-selector" style="display:flex;flex-direction:column;gap:6px;width:100%"></div></div>
     <div class="lb-panel" id="lb-scores"><div class="lb-title-row"><div class="lb-title">best runs</div><div class="lb-filter" id="lb-filter"></div></div><div id="lb-scores-list"></div></div>
-    <div class="lb-panel" id="lb-daily"><div class="lb-title-row"><div class="lb-title">today's window</div></div><div id="lb-daily-list"></div></div>
+    <div class="lb-panel" id="lb-daily"><div class="lb-title-row"><div class="lb-title">today's run</div></div><div id="lb-daily-list"></div></div>
   </div>
 </div>
 <!-- GAME -->
@@ -230,13 +240,14 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
   <div class="eco-sec"><div class="eco-lr"><span>ecosystem</span><span class="eco-st" id="eco-st">in range</span></div><div class="eco-track" id="eco-track-el"><div class="eco-fill" id="efill"></div><div class="sweet" id="sweet"></div><div class="sweet-edge" id="sel"></div><div class="sweet-edge" id="ser"></div><div class="eco-pct" id="epct">—</div></div></div>
   <div class="ph-row"><div class="ph-dot" id="pdot"></div><div class="ph-nm" id="pnm">—</div><div class="ph-tip" id="ptip">—</div></div>
   <div class="legacy-row"><div class="legacy-label">total yield</div><div class="legacy-val" id="g-legacy">0</div></div>
+  <div class="coach-hint" id="coach-hint">tap the bright cells — keep the bar in the green zone</div>
   <div class="toast" id="toast"></div>
   <div id="world"></div>
 </div>
 <!-- END -->
 <div id="screen-end" class="screen">
   <div class="e-eye" id="e-eye">season complete</div><div class="e-reason" id="e-reason">time's up</div>
-  <div class="e-score-wrap"><div class="e-sc-l">run score</div><div class="e-sc-v" id="e-sc">0</div><div class="e-best" id="e-best"></div><div class="e-legacy" id="e-legacy-line"></div></div>
+  <div class="e-score-wrap"><div class="e-sc-l">run score</div><div class="e-sc-v" id="e-sc">0</div><div class="e-best" id="e-best"></div><div class="e-legacy" id="e-legacy-line"></div><div id="e-fail-hint" style="display:none;margin-top:8px;font-size:11px;color:var(--text3);line-height:1.5"></div></div>
   <div class="e-bd"><div class="bd-item"><div class="bd-v" id="bd-h">0</div>harvests</div><div class="bd-item"><div class="bd-v" id="bd-m">x1.0</div>peak mult</div><div class="bd-item"><div class="bd-v" id="bd-b">forest</div>env</div></div>
   <div class="rank-reveal" id="rank-reveal"></div><div class="streak-reveal" id="streak-reveal"></div><div class="p-unlock" id="p-unlock"></div><div class="p-hint" id="p-hint"></div>
   <div class="e-btns"><button class="btn-main" onclick="snd.click();startSeason()">new run</button><button class="btn-pres" id="btn-pres" onclick="snd.click();doPrestige()">unlock next biome</button><button class="btn-home" onclick="snd.click();showTitle()">menu</button><button class="btn-home" id="btn-unlock-end" onclick="snd.click();showUnlockModal()" style="color:var(--gold);border-color:rgba(232,204,120,.3);display:none">unlock full game</button></div>
@@ -248,7 +259,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
     <div class="unlock-features">
       <div class="unlock-feat"><div class="uf-icon" style="background:rgba(109,189,120,.12);font-size:12px;color:var(--g4)">6</div><div class="uf-text"><strong>6 biomes</strong> — volcano, cosmos, desert & arctic</div></div>
       <div class="unlock-feat"><div class="uf-icon" style="background:rgba(160,158,232,.12);font-size:13px;color:var(--purple)">P+</div><div class="uf-text"><strong>Prestige system</strong> — permanent score multipliers</div></div>
-      <div class="unlock-feat"><div class="uf-icon" style="background:rgba(232,204,120,.12);font-size:13px;color:var(--gold)">#1</div><div class="uf-text"><strong>Daily window</strong> — same run for everyone</div></div>
+      <div class="unlock-feat"><div class="uf-icon" style="background:rgba(232,204,120,.12);font-size:13px;color:var(--gold)">#1</div><div class="uf-text"><strong>Today's run</strong> — same run for everyone, resets daily</div></div>
       <div class="unlock-feat"><div class="uf-icon" style="background:rgba(232,92,92,.12);font-size:13px;color:var(--danger)">+%</div><div class="uf-text"><strong>Streak bonuses</strong> — consecutive play rewards</div></div>
     </div>
     <button class="unlock-price-btn" id="iap-btn" onclick="purchaseUnlock()">unlock full system — $1.99</button>
@@ -503,11 +514,11 @@ function showTitle(){dead=true;clearAll();displayCov=0;
   if(unlocked){
     if(chip)chip.style.display='none';
     db.classList.toggle('daily-done',dailyDone===t);
-    if(dbt)dbt.textContent=dailyDone===t?'window closed — come back tomorrow ':'daily window ';
+    if(dbt)dbt.textContent=dailyDone===t?'come back tomorrow ':'today\'s run ';
   }else{
     if(chip)chip.style.display='inline';
     db.classList.remove('daily-done');
-    if(dbt)dbt.textContent='daily window ';
+    if(dbt)dbt.textContent='today\'s run ';
   }
   renderLeaderboard('scores','forest');showTab('biomes');switchScreen('screen-title');spawnBg()}
 
@@ -555,7 +566,8 @@ function startSeason(daily=false){clearAll();isDaily=daily;harvests=0;bestMult=1
   const sc=document.getElementById('streak-chip');if(sc){if(streak>0){sc.textContent=streak+'d streak';sc.classList.add('on')}else sc.classList.remove('on')}
   const dc=document.getElementById('daily-chip');if(dc)dc.classList.toggle('on',isDaily);
   switchScreen('screen-game');initGrid();startPhase(1,daily);render();updateHUD();
-  tickIv=setInterval(tick,650);countIv=setInterval(countdown,1000)}
+  tickIv=setInterval(tick,650);countIv=setInterval(countdown,1000);
+  if(totalSeasons===0){const ch=document.getElementById('coach-hint');if(ch){ch.classList.add('on');clearTimeout(window._coachTmr);window._coachTmr=setTimeout(()=>ch.classList.remove('on'),15000)}}}
 function startDaily(){if(dailyDone===todayStr())return;startSeason(true)}
 function clearAll(){clearInterval(tickIv);clearInterval(countIv);clearTimeout(phaseTimer)}
 
@@ -579,7 +591,7 @@ function tick(){if(dead||!document.getElementById('screen-game')?.classList.cont
   const maxed=cells.filter(s=>s===5).length,oT=bn==='cosmos'?.72:.68;
   if(maxed>N*oT){endSeason('overgrown');return}
   if(ac<8&&score>10){endSeason('collapsed');return}
-  const tk=document.getElementById('eco-track-el');if(ac>SH+10||ac<SL-10)tk.classList.add('critical-state');else tk.classList.remove('critical-state');
+  const tk=document.getElementById('eco-track-el');if(ac>SH+10||ac<SL-10)tk.classList.add('critical-state');else tk.classList.remove('critical-state');tk.classList.toggle('danger-over',ac>SH+5);tk.classList.toggle('danger-under',ac<SL-5&&!(ac>SH+5));
   render();updateHUD()}
 
 function clickCell(i){if(dead)return;const s=cells[i];if(s===0){toast('nothing here');return}
@@ -592,10 +604,11 @@ function clickCell(i){if(dead)return;const s=cells[i];if(s===0){toast('nothing h
   const oh=nCov<SL-5&&pCov>=SL-5; // overharvest: crossing out of range
   let pts=Math.round(s*m*presMult);
   if(isPerfect)pts=Math.round(pts*1.5);if(combo>=2)pts=Math.round(pts*(1+combo*.15));if(oh)pts=Math.round(pts*.6);if(cleanBloom)pts=Math.round(pts*1.2);
-  score+=pts;harvests++;if(m>bestMult)bestMult=m;displayCov+=(nCov-displayCov)*.4;
+  score+=pts;harvests++;if(harvests===1){const ch=document.getElementById('coach-hint');if(ch){ch.classList.remove('on');clearTimeout(window._coachTmr)}}if(m>bestMult)bestMult=m;displayCov+=(nCov-displayCov)*.4;
   snd.harvest(s,m);if(isPerfect){snd.perfect();hap.med()}else if(combo>=3){snd.combo(combo);hap.med()}else hap.tap();
   if(oh)hap.warning();
   if(oh)toast('too sparse! -40% +'+pts);else if(isPerfect&&combo>=2)toast('combo+perfect +'+pts);else if(isPerfect)toast('perfect harvest +'+pts);else if(combo>=3)toast('x'+combo+' combo +'+pts);else if(m>=2.5)toast('in window x'+m.toFixed(1)+' +'+pts);else if(m>=1.8)toast('x'+m.toFixed(1)+' +'+pts);else toast('+'+pts);
+  const cel=document.getElementById('world')?.children[i];if(cel){cel.classList.remove('popping');void cel.offsetWidth;cel.classList.add('popping');cel.addEventListener('animationend',()=>cel.classList.remove('popping'),{once:true});const r=cel.getBoundingClientRect();const fp=document.createElement('div');fp.className='float-pts';fp.textContent='+'+pts;fp.style.cssText='left:'+(r.left+r.width/2)+'px;top:'+(r.top+4)+'px;color:'+(isPerfect?'var(--gold)':m>=1.5?'var(--purple)':'var(--g4)')+';transform:translateX(-50%)';document.body.appendChild(fp);fp.addEventListener('animationend',()=>fp.remove(),{once:true})}
   render();updateHUD()}
 
 function updateHUD(){
@@ -607,7 +620,7 @@ function updateHUD(){
   const tf=document.getElementById('tfill');if(tf){tf.style.width=Math.round(secsLeft/SECS*100)+'%';tf.style.background=secsLeft<=8?'var(--danger)':secsLeft<=15?'var(--warn)':'var(--g3)'}
   const ef=document.getElementById('efill');if(ef){ef.style.width=c+'%';ef.style.background=c>SH?'var(--danger)':c<SL?'var(--info)':'var(--g3)'}
   const epct=document.getElementById('epct');if(epct)epct.textContent=c+'%';
-  const sw=document.getElementById('sweet');if(sw){sw.style.cssText='position:absolute;top:0;height:100%;left:'+SL+'%;width:'+(SH-SL)+'%;background:rgba(109,189,120,.1);pointer-events:none';sw.classList.toggle('pulse',m>=2)}
+  const sw=document.getElementById('sweet');if(sw){sw.style.cssText='position:absolute;top:0;height:100%;left:'+SL+'%;width:'+(SH-SL)+'%;background:rgba(109,189,120,.16);pointer-events:none';if(!sw.querySelector('.sweet-label')){const sl=document.createElement('span');sl.className='sweet-label';sl.textContent='window';sw.appendChild(sl)}sw.classList.toggle('pulse',m>=2);sw.classList.toggle('in-zone',m>=1.5)}
   const sel=document.getElementById('sel'),ser=document.getElementById('ser');if(sel)sel.style.left=SL+'%';if(ser)ser.style.left=SH+'%';
   const st=document.getElementById('eco-st'),ac=actualCov();
   if(st){if(ac>SH){st.textContent='overgrown — harvest!';st.style.color='var(--danger)'}else if(ac<SL){st.textContent='too sparse — wait';st.style.color='var(--info)'}else if(m>=2.5){st.textContent='in the window';st.style.color='var(--gold)'}else if(m>=2){st.textContent='harvest window';st.style.color='var(--purple)'}else{st.textContent='in range';st.style.color='var(--text3)'}}
@@ -624,12 +637,13 @@ function endSeason(reason){dead=true;clearAll();totalSeasons++;snd.over(reason);
   if(isDaily){dailyDone=todayStr();const t=todayStr();if(!dailyScores[t])dailyScores[t]=[];dailyScores[t].push({name:playerName==='anonymous'?'you':playerName,score,biome:bm().name});if(dailyScores[t].length===1)dailyScores[t].push(...genFakes(score,bm().name))}
   lb.submit(score,bm().name,isDaily,isDaily?todayStr():null);
   seasonNum++;doSave();
-  const map={timeout:['run complete','time\'s up'],overgrown:['overgrown','growth won'],collapsed:['window lost','cleared too hard']};
+  const map={timeout:['run complete','time\'s up'],overgrown:['overgrown','waited too long'],collapsed:['collapsed','harvested too fast']};
   const[eye,rsn]=map[reason]||map.timeout;
   const eEye=document.getElementById('e-eye'),eRsn=document.getElementById('e-reason'),eSc=document.getElementById('e-sc');
-  if(eEye)eEye.textContent=isDaily?'window complete':eye;
+  if(eEye)eEye.textContent=isDaily?'today\'s run complete':eye;
   if(eRsn)eRsn.textContent=rsn;
   if(eSc)eSc.textContent=score.toLocaleString();
+  const efh=document.getElementById('e-fail-hint');if(efh){if(reason==='overgrown'){efh.textContent='the ecosystem maxed out — harvest more aggressively';efh.style.display='block'}else if(reason==='collapsed'){efh.textContent='coverage dropped too low — let it grow before harvesting';efh.style.display='block'}else efh.style.display='none'}
   const eBest=document.getElementById('e-best');
   if(eBest)eBest.innerHTML=isNew?'<span class="e-best-new">new personal best!</span>':'personal best: '+allTimeBest.toLocaleString();
   const eLeg=document.getElementById('e-legacy-line');
