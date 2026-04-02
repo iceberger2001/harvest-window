@@ -391,11 +391,33 @@ const lb={
     const URL='https://mcjbuqbccghrjgstcvln.supabase.co';
     const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jamJ1cWJjY2docmpnc3RjdmxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwODEwNjIsImV4cCI6MjA5MDY1NzA2Mn0.pn1nRE7WYe3HaI2rhR6yFDR95CsdKArL2_VM5spIDks';
     if(URL.startsWith('YOUR_'))return;
-    try{if(typeof supabase!=='undefined'){this.sb=supabase.createClient(URL,KEY);this.ok=true;this.pid=localStorage.getItem('hw_pid');if(!this.pid){this.pid='p_'+Math.random().toString(36).substr(2,12);localStorage.setItem('hw_pid',this.pid)}}}catch(e){}
+    try{
+      console.log('[lb] supabase global:', typeof supabase);
+      if(typeof supabase!=='undefined'){
+        this.sb=supabase.createClient(URL,KEY);
+        this.ok=true;
+        this.pid=localStorage.getItem('hw_pid');
+        if(!this.pid){this.pid='p_'+Math.random().toString(36).substr(2,12);localStorage.setItem('hw_pid',this.pid)}
+        console.log('[lb] init OK, pid:', this.pid);
+      } else {
+        console.error('[lb] supabase not found — CDN failed to load');
+      }
+    }catch(e){console.error('[lb] init error:', e)}
   },
-  async submit(score,biome,daily,date){if(!this.ok)return;try{await this.sb.from('leaderboard').insert({player_id:this.pid,player_name:this.pname,score,biome,is_daily:daily,daily_date:daily?date:null})}catch(e){}},
-  async top(biome,n=10){if(!this.ok)return null;try{const{data}=await this.sb.from('leaderboard').select('player_name,score').eq('biome',biome).eq('is_daily',false).order('score',{ascending:false}).limit(n);return data}catch(e){return null}},
-  async daily(date,n=10){if(!this.ok)return null;try{const{data}=await this.sb.from('leaderboard').select('player_name,score').eq('is_daily',true).eq('daily_date',date).order('score',{ascending:false}).limit(n);return data}catch(e){return null}},
+  async submit(score,biome,daily,date){
+    console.log('[lb] submit called, ok:', this.ok, {score,biome,daily,date});
+    if(!this.ok){console.warn('[lb] submit skipped — not initialized');return;}
+    try{
+      const table=daily?'daily_runs':'runs';
+      const payload=daily
+        ?{player_id:this.pid,player_name:this.pname,score,date}
+        :{player_id:this.pid,player_name:this.pname,score,biome};
+      const res=await this.sb.from(table).insert(payload);
+      console.log('[lb] insert result:', res);
+    }catch(e){console.error('[lb] insert error:', e)}
+  },
+  async top(biome,n=10){if(!this.ok)return null;try{const{data}=await this.sb.from('runs').select('player_name,score').eq('biome',biome).order('score',{ascending:false}).limit(n);return data}catch(e){return null}},
+  async daily(date,n=10){if(!this.ok)return null;try{const{data}=await this.sb.from('daily_runs').select('player_name,score').eq('date',date).order('score',{ascending:false}).limit(n);return data}catch(e){return null}},
 };
 
 // ── SEEDED RNG ──
