@@ -513,8 +513,8 @@ function showTitle(){dead=true;clearAll();displayCov=0;
   const db=document.getElementById('daily-btn'),chip=document.getElementById('daily-premium-chip'),dbt=document.getElementById('daily-btn-text'),t=todayStr();
   if(unlocked){
     if(chip)chip.style.display='none';
-    db.classList.toggle('daily-done',dailyDone===t);
-    if(dbt)dbt.textContent=dailyDone===t?'come back tomorrow ':'today\'s run ';
+    db.classList.remove('daily-done');
+    if(dbt)dbt.textContent='today\'s run ';
   }else{
     if(chip)chip.style.display='inline';
     db.classList.remove('daily-done');
@@ -568,7 +568,7 @@ function startSeason(daily=false){clearAll();isDaily=daily;harvests=0;bestMult=1
   switchScreen('screen-game');initGrid();startPhase(1,daily);render();updateHUD();
   tickIv=setInterval(tick,650);countIv=setInterval(countdown,1000);
   if(totalSeasons===0){const ch=document.getElementById('coach-hint');if(ch){ch.classList.add('on');clearTimeout(window._coachTmr);window._coachTmr=setTimeout(()=>ch.classList.remove('on'),15000)}}}
-function startDaily(){if(dailyDone===todayStr())return;startSeason(true)}
+function startDaily(){startSeason(true)}
 function clearAll(){clearInterval(tickIv);clearInterval(countIv);clearTimeout(phaseTimer)}
 
 // ── OPTIMIZED RENDER ──
