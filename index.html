@@ -63,7 +63,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
 .play-btn{background:var(--g3);color:var(--text);border:none;border-radius:var(--r);padding:14px 52px;font-family:var(--dm);font-size:15px;font-weight:500;letter-spacing:.05em;cursor:pointer;transition:background .2s,transform .1s;width:100%;max-width:280px}
 .play-btn:active{transform:scale(.96);background:var(--g4)}
 .daily-btn{background:rgba(232,204,120,.12);color:var(--gold);border:.5px solid rgba(232,204,120,.3);border-radius:var(--r);padding:11px 52px;font-family:var(--dm);font-size:13px;font-weight:500;letter-spacing:.04em;cursor:pointer;transition:background .2s,transform .1s;width:100%;max-width:280px}
-.daily-btn:active{transform:scale(.97)}.daily-done{opacity:.4;cursor:not-allowed}
+.daily-btn:active{transform:scale(.97)}.daily-done{opacity:.4;cursor:not-allowed;pointer-events:none}
 .t-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:280px;position:relative}
 .ts-item{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--rs);padding:8px;text-align:center}
 .ts-v{font-size:16px;font-weight:500;color:var(--text)}.ts-l{font-size:10px;color:var(--text3);margin-top:1px;letter-spacing:.08em}
@@ -227,7 +227,7 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
     <div class="ts-item"><div class="ts-v" id="tb-pres">1/6</div><div class="ts-l">biomes</div></div>
   </div>
   <button class="play-btn" onclick="snd.click();showTutorial()" style="margin-bottom:8px">open window</button>
-  <button class="daily-btn" id="daily-btn" onclick="snd.click();handleDailyBtn()" style="margin-bottom:8px"><span id="daily-btn-text">today's run </span><span class="premium-chip" id="daily-premium-chip">pro</span></button>
+  <button class="daily-btn" id="daily-btn" onclick="snd.click();handleDailyBtn()" style="margin-bottom:8px"><span id="daily-btn-text">today's harvest</span><span class="premium-chip" id="daily-premium-chip">pro</span><br><span style="font-size:10px;opacity:0.6;letter-spacing:.04em">(one chance!)</span></button>
   <button class="settings-btn" onclick="snd.click();showSettings()" style="margin-bottom:12px;width:100%;max-width:280px;padding:8px">settings</button>
   <div class="nav-tabs" style="margin-bottom:10px">
     <button class="nav-tab active" onclick="showTab('biomes')">biomes</button>
@@ -285,18 +285,15 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
 </div>
 <!-- TUTORIAL -->
 <div class="modal-wrap" id="tutorial-modal" onclick="if(event.target===this)closeTutorial()">
-  <div class="modal"><div class="modal-handle"></div><div class="modal-title">Harvest Window</div><div class="modal-sub">The ecosystem grows on its own. Stay in the window. Score multiplies.</div>
-    <div class="tut-section"><div class="tut-label">four rules</div>
-      <div class="tut-rule"><div class="tut-icon" style="background:var(--g2);font-size:11px;color:var(--g5);font-weight:500;text-align:center;line-height:1.3">keep<br>in</div><div class="tut-text"><strong>Keep coverage in the Harvest Window.</strong> The glowing band is your target zone.</div></div>
-      <div class="tut-rule"><div class="tut-icon" style="background:var(--bg3);font-size:11px;color:var(--text2);font-weight:500;text-align:center;line-height:1.3">tap<br>ripe</div><div class="tut-text"><strong>Tap mature cells for more points.</strong> Brighter = more grown = higher value.</div></div>
-      <div class="tut-rule"><div class="tut-icon" style="background:rgba(232,92,92,.15);font-size:11px;color:var(--danger);font-weight:500;text-align:center;line-height:1.3">too<br>full</div><div class="tut-text"><strong>Too full or too empty ends the run.</strong></div></div>
-      <div class="tut-rule"><div class="tut-icon" style="background:rgba(232,180,109,.15);font-size:11px;color:var(--warn);font-weight:500;text-align:center;line-height:1.3">read<br>speed</div><div class="tut-text"><strong>Growth speed changes over time.</strong> Dormant = wait. Bloom = harvest fast.</div></div>
+  <div class="modal"><div class="modal-handle"></div><div class="modal-title">Harvest Window</div><div class="modal-sub">Stay in the window. Tap ripe cells. Score multiplies.</div>
+    <div class="tut-section">
+      <div class="tut-rule"><div class="tut-icon" style="background:var(--g2);font-size:18px">🎯</div><div class="tut-text">Keep the bar <strong>inside the window.</strong> Too full or too empty ends the run.</div></div>
+      <div class="tut-rule"><div class="tut-icon" style="background:var(--bg3);font-size:18px">✋</div><div class="tut-text"><strong>Tap bright cells</strong> to harvest — brighter = riper = more points.</div></div>
+      <div class="tut-rule"><div class="tut-icon" style="background:rgba(232,180,109,.15);font-size:18px">⚡</div><div class="tut-text">Speed <strong>shifts</strong> — dormant: wait. Bloom: harvest fast.</div></div>
     </div>
-    <div class="tut-section"><div class="tut-label">harvest window — centered = max score</div>
-      <div class="mult-preview"><div class="mult-bar-track" style="margin-bottom:6px"><div class="mult-zone" style="left:35%;width:30%"></div><div class="mult-zone-edge" style="left:35%"></div><div class="mult-zone-edge" style="left:65%"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;color:var(--purple);font-weight:500">harvest window</div></div><div class="mult-labels"><span>collapsed</span><span>overgrown</span></div></div>
-      <div class="mult-tier"><div class="mult-tier-badge" style="color:var(--text3)">x1.0</div><div class="mult-tier-desc">outside — base points</div></div>
-      <div class="mult-tier"><div class="mult-tier-badge" style="color:var(--g4)">x1.5</div><div class="mult-tier-desc">inside — score bonus</div></div>
-      <div class="mult-tier"><div class="mult-tier-badge" style="color:var(--purple)">x2.0</div><div class="mult-tier-desc">centered — window bonus</div></div>
+    <div class="tut-section"><div class="tut-label">window multiplier</div>
+      <div class="mult-tier"><div class="mult-tier-badge" style="color:var(--g4)">x1.5</div><div class="mult-tier-desc">inside</div></div>
+      <div class="mult-tier"><div class="mult-tier-badge" style="color:var(--purple)">x2.0</div><div class="mult-tier-desc">centered</div></div>
       <div class="mult-tier"><div class="mult-tier-badge" style="color:var(--gold)">x3.0+</div><div class="mult-tier-desc">dead center — max yield</div></div>
     </div>
     <button class="modal-close" onclick="closeTutorial()">open the window</button>
@@ -322,12 +319,12 @@ body{display:flex;flex-direction:column;align-items:center;min-height:100dvh;}
 const N=25,SECS=45,SL=35,SH=65,SAVE_KEY='hw_v2';
 
 const BIOMES=[
-  {name:'forest',hint:'balanced baseline',color:'#4a8c52',sm:1.0,threshold:0,scoreBonus:1.0},
-  {name:'reef',hint:'neighbors grow together',color:'#2a8070',sm:1.25,threshold:150,scoreBonus:1.15},
-  {name:'volcano',hint:'burst cluster growth',color:'#8c4530',sm:1.6,threshold:250,scoreBonus:1.3},
-  {name:'cosmos',hint:'slow build, violent bloom',color:'#3d348c',sm:2.0,threshold:400,scoreBonus:1.5},
-  {name:'desert',hint:'patchy regrowth',color:'#7a6030',sm:2.5,threshold:600,scoreBonus:1.75},
-  {name:'arctic',hint:'slow charge, fast release',color:'#2a5480',sm:3.2,threshold:900,scoreBonus:2.0},
+  {name:'forest', icon:'🌲', hint:'balanced baseline',        color:'#2ecc6a', sm:1.0,  threshold:0,   scoreBonus:1.0},
+  {name:'reef',   icon:'🪸', hint:'neighbors grow together',  color:'#00e5c0', sm:1.25, threshold:150, scoreBonus:1.15},
+  {name:'volcano',icon:'🌋', hint:'burst cluster growth',     color:'#ff4422', sm:1.6,  threshold:250, scoreBonus:1.3},
+  {name:'cosmos', icon:'✨', hint:'slow build, violent bloom', color:'#9966ff', sm:2.0,  threshold:400, scoreBonus:1.5},
+  {name:'desert', icon:'🌵', hint:'patchy regrowth',          color:'#ffb800', sm:2.5,  threshold:600, scoreBonus:1.75},
+  {name:'arctic', icon:'❄️', hint:'slow charge, fast release', color:'#44d4ff', sm:3.2,  threshold:900, scoreBonus:2.0},
 ];
 const PHASES=[
   {name:'dormant',tip:'let it fill',speed:0.03,color:'#6d9ee8'},
@@ -497,7 +494,7 @@ function showUnlockModal(){document.getElementById('unlock-modal').classList.add
 function closeUnlockModal(){document.getElementById('unlock-modal').classList.remove('on')}
 async function purchaseUnlock(){const b=document.getElementById('iap-btn');b.textContent='processing...';b.style.opacity='.6';try{if(await iap.buy()){unlocked=true;doSave();closeUnlockModal();snd.fanfare();hap.success();toast('full game unlocked!');showTitle()}else{b.textContent='unlock full system — $1.99';b.style.opacity='1'}}catch(e){b.textContent='error — try again';b.style.opacity='1';setTimeout(()=>{b.textContent='unlock full system — $1.99'},2000)}}
 async function restorePurchases(){try{if(await iap.restore()){unlocked=true;doSave();closeUnlockModal();snd.fanfare();toast('purchase restored!');showTitle()}else toast('no purchase found')}catch(e){toast('restore failed')}}
-function handleDailyBtn(){snd.click();if(!unlocked){showUnlockModal();return}startDaily()}
+function handleDailyBtn(){snd.click();if(!unlocked){showUnlockModal();return}if(dailyDone===todayStr())return;startDaily()}
 
 // ── PAUSE ──
 function showPause(){if(dead)return;paused=true;clearInterval(tickIv);clearInterval(countIv);clearTimeout(phaseTimer);const mn=Math.floor(secsLeft/60),s2=secsLeft%60;document.getElementById('ps-score').textContent=score.toLocaleString();document.getElementById('ps-time').textContent=mn+':'+(s2<10?'0':'')+s2;document.getElementById('ps-mult').textContent='x'+mult().toFixed(1);document.getElementById('ps-harvests').textContent=harvests;document.getElementById('pause-biome-line').textContent=bm().name+' — run '+seasonNum;document.getElementById('pause-modal').classList.add('on')}
@@ -519,14 +516,18 @@ function showTitle(){dead=true;clearAll();displayCov=0;
   if(streak>0&&unlocked){sb.classList.add('on');document.getElementById('streak-banner-text').textContent=streak+' day streak';document.getElementById('streak-banner-sub').textContent='daily yield bonus active'}else sb.classList.remove('on');
   renderBiomeSelector();
   const db=document.getElementById('daily-btn'),chip=document.getElementById('daily-premium-chip'),dbt=document.getElementById('daily-btn-text'),t=todayStr();
-  if(unlocked){
-    if(chip)chip.style.display='none';
-    db.classList.remove('daily-done');
-    if(dbt)dbt.textContent='today\'s run ';
-  }else{
+  if(!unlocked){
     if(chip)chip.style.display='inline';
     db.classList.remove('daily-done');
-    if(dbt)dbt.textContent='today\'s run ';
+    if(dbt)dbt.textContent="today's harvest";
+  }else if(dailyDone===t){
+    if(chip)chip.style.display='none';
+    db.classList.add('daily-done');
+    if(dbt)dbt.textContent='harvested today ✓';
+  }else{
+    if(chip)chip.style.display='none';
+    db.classList.remove('daily-done');
+    if(dbt)dbt.textContent="today's harvest";
   }
   renderLeaderboard('scores','forest');showTab('biomes');switchScreen('screen-title');spawnBg()}
 
@@ -542,8 +543,9 @@ function renderBiomeSelector(){const el=document.getElementById('biome-selector'
   else if(!isU) rc='<div class="bc-lock" style="text-align:right;line-height:1.4">'+b.threshold+'pts<br><span style="font-size:9px;opacity:0.7">to unlock</span></div>';
   // Score threshold line under name
   const thresholdLine=b.threshold>0?'<div class="bc-bonus" style="margin-top:1px;color:var(--text3)">'+b.hint+'</div>':'<div class="bc-bonus" style="margin-top:1px;color:var(--g4)">free · starter biome</div>';
-  c.innerHTML=`<div class="bc-pip" style="background:${b.color}"></div><div style="flex:1"><div class="bc-name">${b.name}</div>${thresholdLine}</div><div style="text-align:right"><div class="bc-bonus">${bl}</div></div>${rc}`;
-  if(isU) c.onclick=()=>{snd.click();activeBiome=i;doSave();renderBiomeSelector()};
+  c.style.borderLeft=`3px solid ${b.color}`;
+  c.innerHTML=`<div style="font-size:20px;width:28px;text-align:center;flex-shrink:0">${b.icon}</div><div style="flex:1"><div class="bc-name">${b.name}</div>${thresholdLine}</div><div style="text-align:right"><div class="bc-bonus">${bl}</div></div>${rc}`;
+  if(isU) c.onclick=()=>{snd.click();activeBiome=i;doSave();applyBiomeTheme(b.name);renderBiomeSelector()};
   else if(isPG){c.onclick=()=>{snd.click();showUnlockModal()};c.style.opacity='.65';c.style.cursor='pointer'}
   el.appendChild(c)
 })}
@@ -566,6 +568,7 @@ function startSeason(daily=false){clearAll();isDaily=daily;harvests=0;bestMult=1
   const b=bm();presMult=b.scoreBonus;
   cells=daily?Array(N).fill(0).map((_,i)=>{const r=sRng(todaySeed());for(let j=0;j<i;j++)r();return Math.floor(r()*3)}):Array(N).fill(0).map(()=>Math.floor(Math.random()*3));
   prev=[...cells];
+  applyBiomeTheme(b.name);
   const gs=document.getElementById('screen-game');gs.className='screen active biome-'+b.name;
   const bpip=document.getElementById('bpip');if(bpip)bpip.style.background=b.color;
   const bname=document.getElementById('bname');if(bname)bname.textContent=b.name;
@@ -699,7 +702,7 @@ function endSeason(reason){dead=true;clearAll();totalSeasons++;snd.over(reason);
 function doPrestige(){
   const ni=BIOMES.findIndex((b,i)=>!unlockedBiomes.includes(i));
   if(ni<0||ni!==unlockedBiomes.length||unlockedBiomes.includes(ni))return showTitle();
-  unlockedBiomes.push(ni);activeBiome=ni;snd.fanfare();hap.success();doSave();showTitle();
+  unlockedBiomes.push(ni);activeBiome=ni;snd.fanfare();hap.success();doSave();applyBiomeTheme(BIOMES[ni].name);showTitle();
 }
 
 // ── BIOME SVGs ──
@@ -742,8 +745,25 @@ const BIOME_SVGS={
     `<svg width="100%" height="100%" viewBox="0 0 32 32" fill="none"><polygon points="16,11 12,28 20,28" fill="#2a5480"/><polygon points="16,7 7,24 25,24" fill="#4888c8"/><polygon points="16,3 8,16 24,16" fill="#6aaad8"/><polygon points="16,0 11,9 21,9" fill="#88c8f8"/><circle cx="7" cy="10" r="2" fill="#88c8f8"/><circle cx="25" cy="10" r="2" fill="#88c8f8"/></svg>`],
 };
 
+// ── BIOME THEMES ──
+const BIOME_THEMES={
+  forest: {bg:'#071408',bg2:'#0c1b0e',bg3:'#112013'},
+  reef:   {bg:'#041516',bg2:'#091e1f',bg3:'#0d2324'},
+  volcano:{bg:'#180504',bg2:'#200b08',bg3:'#260f0c'},
+  cosmos: {bg:'#05031a',bg2:'#0b0a22',bg3:'#100e2c'},
+  desert: {bg:'#160e04',bg2:'#1e1808',bg3:'#24200e'},
+  arctic: {bg:'#030d1a',bg2:'#071522',bg3:'#0c1e2e'},
+};
+function applyBiomeTheme(name){
+  const t=BIOME_THEMES[name]||BIOME_THEMES.forest;
+  const r=document.documentElement.style;
+  r.setProperty('--bg',t.bg);r.setProperty('--bg2',t.bg2);r.setProperty('--bg3',t.bg3);
+  document.body.style.background=t.bg;
+  const mc=document.querySelector('meta[name="theme-color"]');if(mc)mc.content=t.bg;
+}
+
 // ── INIT ──
-async function boot(){loadSave();lb.pname=playerName;await lb.init();
+async function boot(){loadSave();applyBiomeTheme(BIOMES[activeBiome].name);lb.pname=playerName;await lb.init();
   const purchased=await iap.init();if(purchased&&!unlocked){unlocked=true;doSave()}
   iap.price().then(p=>{const b=document.getElementById('iap-btn');if(b)b.textContent='unlock full system — '+p});
   showTitle()}
